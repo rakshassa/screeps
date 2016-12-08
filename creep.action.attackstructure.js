@@ -1,18 +1,18 @@
 var action = {
     work: function(creep) {
-    	var hostilecreep = Memory.Config.TargetSelectors['hostile'].select(creep);
-    	if (!hostilecreep) { return false; }
+    	var hostile = Memory.Config.TargetSelectors['hostilestructure'].select(creep);
+    	if (!hostile) { return false; }
 
     	var retVal = OK;
 
     	if (creep.memory.role == 'ranged') {
-    		retVal = creep.rangedAttack(hostilecreep);
+    		retVal = creep.rangedAttack(hostile);
     	} else {
-    		retVal = creep.attack(hostilecreep);
+    		retVal = creep.attack(hostile);
     	}
     	if(retVal == ERR_NOT_IN_RANGE) {
     		
-            creep.moveTo(hostilecreep);
+            creep.moveTo(hostile);
         } else {
         	if (retVal != OK) {
         		console.log('Failed to attack: ' + retVal);

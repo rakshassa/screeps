@@ -3,8 +3,13 @@ var action = {
     	var source = Memory.Config.TargetSelectors['mining'].select(creep);    	
         if(!source) { return false; }
 
-        if(creep.harvest(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+        var retVal = creep.harvest(source, RESOURCE_ENERGY);
+        if(retVal == ERR_NOT_IN_RANGE) {
             creep.moveTo(source);
+        } else {
+        	if (retVal != OK) {
+        		console.log(creep.name + " Failed to Harvest: " + retVal)
+        	}
         }
         return true;
     }

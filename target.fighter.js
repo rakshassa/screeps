@@ -1,16 +1,18 @@
 var target = {
     select: function(creep) {       
         var myRoomName = creep.room.name;
-
-        for (var fighter in Memory.Config.Census['ranged']) {
-            if (fighter.room.name == myRoomName) {
-                return fighter;
-            }
+        
+        var matches = _.filter(Game.creeps, 
+                    (creep) => ((creep.memory.role == 'ranged') && (creep.room.name == roomName)));
+        
+        for (var fighter in matches) {
+            return fighter;            
         }
-        for (var fighter in Memory.Config.Census['melee']) {
-            if (fighter.room.name == myRoomName) {
-                return fighter;
-            }
+
+        matches = _.filter(Game.creeps, 
+                    (creep) => ((creep.memory.role == 'melee') && (creep.room.name == roomName)));
+        for (var fighter in matches) {            
+            return fighter;            
         }
         
         return null;

@@ -1,10 +1,10 @@
 
 var action = {
-    work: function(creep) {
-    	var dropoff = Memory.Config.TargetSelectors['dropoff'].select(creep);    	
-        if(!dropoff) { return false; }
+    work: function(creep, useLink=false) {
+    	var dropoff = Memory.Config.TargetSelectors['dropoff'].select(creep, useLink);    	
+        if (!dropoff) { return false; }
 
-        if(creep.transfer(dropoff, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+        if (creep.transfer(dropoff, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             creep.moveTo(dropoff);
         }
         return true;

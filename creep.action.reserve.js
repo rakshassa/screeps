@@ -9,12 +9,12 @@ var action = {
             } else {
                 if (retVal != OK) {
                     creep.memory.invalidController = true;
-                    Game.notify('Cannot reserve controller in room: ' + Memory.Config.remoteroom, 20);
+                    Game.notify('Cannot reserve controller in room: ' + creep.room.name, 20);
                     return false;
                 }
             }
         } else {
-        	Game.notify('No controller in room: ' + Memory.Config.remoteroom, 20);
+        	Game.notify('No controller in room: ' + creep.room.name, 20);
         	return false;
         }
         
