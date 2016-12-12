@@ -12,8 +12,10 @@ var config = {
             'melee': require('creep.role.melee'),
             'ranged': require('creep.role.ranged'),            
             'tower': require('creep.role.towerfiller'),
-            'recycle': require('creep.role.recycle')
-        }
+            'recycle': require('creep.role.recycle'),
+            'claimer': require('creep.role.claimer'),
+            'extractor': require('creep.role.extractor')
+        };
 
         Memory.Config.Actions = {
             // 'healing': require('creep.action.healing'),            
@@ -40,7 +42,9 @@ var config = {
             'attackstructure': require('creep.action.attackstructure'),
             'renew': require('creep.action.renew'),   
             'dumpminerals': require('creep.action.dumpminerals'),
-            'dropoff': require('creep.action.dropoff')            
+            'dropoff': require('creep.action.dropoff'),
+            'claim': require('creep.action.claim'),
+            'extract': require('creep.action.extract')
         };
 
         Memory.Config.TargetSelectors = {
@@ -61,13 +65,14 @@ var config = {
             'fighter': require('target.fighter'),
             'spawn': require('target.spawn'), 
             'mineralstorage': require('target.mineralstorage'),
-            'tower': require('target.tower')
+            'tower': require('target.tower'),
+            'extractor': require('target.extractor')
         };        
 
         Memory.Config.Structure = {};
         Memory.Config.Structure.Roles = {
             'tower': require('structure.role.tower')
-        }
+        };
     }
 };
 

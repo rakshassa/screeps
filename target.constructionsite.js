@@ -18,7 +18,9 @@ var target = {
         if (!closestConstructionSite) {
             closestConstructionSite = room.controller.pos.findClosestByRange(FIND_CONSTRUCTION_SITES, {
                 filter: (structure) => {
-                    return (structure.structureType == STRUCTURE_ROAD);
+                    return (structure.structureType == STRUCTURE_ROAD || 
+                            structure.structureType == STRUCTURE_EXTRACTOR ||
+                            structure.structureType == STRUCTURE_TERMINAL);
                 }
             });
         }

@@ -1,6 +1,5 @@
 var roleBuilder = {
-
-    /** @param {Creep} creep **/
+    
     run: function(creep) {
 
         if(creep.memory.building && _.sum(creep.carry) == 0) {
@@ -18,7 +17,7 @@ var roleBuilder = {
 
         if(creep.memory.building) {
             if (Memory.Config.Actions['dumpminerals'].work(creep)) { return true; }
-            if (Memory.Config.Actions['building'].work(creep)) { return true; }
+            if (Memory.Config.Actions['building'].work(creep)) { return true; }            
             if (Memory.Config.Actions['dropoff'].work(creep, false)) { return true; }            
             if (Memory.Config.Actions['upgrade'].work(creep)) { return true; } 
         }

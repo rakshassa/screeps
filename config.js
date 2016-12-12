@@ -6,24 +6,37 @@ var config = {
         Memory.Config = {};
         
         //Memory.Config.takeoverRoom = 'W58S78'; // uncomment to attack the specified room
-        Memory.Config.prepareTakeover = false;
+        Memory.Config.prepareTakeover = false; // true - renew all fighters. false - don't renew them.
 
         Memory.Config.CONSUME_CONTAINERS = false; // true - use energy, false - dropoff energy
-        Memory.Config.ALLOW_HANDOFF = true; // true - harvesters handoff, false - harvesters keep
-
-        //Memory.Config.ReturnFlagName = 'Return';
+        Memory.Config.ALLOW_HANDOFF = false; // true - harvesters handoff, false - harvesters keep
+        Memory.Config.ALLOW_RENEW = true; // true - creeps will go to a spawn for renew when they get low on ticks. (false ignores renew)
+        
+        // The name of the flags where you want your fighters to rally.
         Memory.Config.HealerRallyFlagName = 'Rally2';
         Memory.Config.MeleeRallyFlagName = 'Rally2';
         Memory.Config.RangedRallyFlagName = 'Rally';
+
+        // The name of the flag where you want your creeps to hide when we get attacked.
         Memory.Config.HidingFlagName = 'Hiding';
         
-        Memory.Config.baseroom = 'W8N3';
+        // The name of your most fortified spawn - used as a default hiding area when everything else is dying.        
         Memory.Config.primaryspawn = 'EliTown';
+
+        // The list of rooms to be reserved - and which room to create the reserver from. (source: destination)
         Memory.Config.reserverooms = {
-            'W8N3': [ ]
+            'W57S79': [ 'W58S79']
         }
+        // the list of rooms to farm that you do not own (source: destination)
         Memory.Config.remoteharvestrooms = {
-            'W8N3': [ 'W8N2']
+            'W57S79': ['W58S79'],
+            'W58S78': ['W59S78']
+        }
+        // the list of rooms to extract minerals from (source: destination)
+        // You must list your own rooms, too.
+        // NOTE: you need an extractor to harvest minerals - so you can't just harvest every nearby room.
+        Memory.Config.extractrooms = {
+            'W57S79': ['W57S79']
         }
 
         // If my reservation is already past this value, then don't make a new reserver yet.
@@ -36,18 +49,24 @@ var config = {
         Memory.Config.MIN_FIGHTER_TICKSTOLIVE = 800;
         // Max number of creeps to renew simultaeously.
         Memory.Config.MAX_RENEW_COUNT = 2;
-        // Amount below max energy to use when calculating creep sizes for autospawn.
-        Memory.Config.SPAWN_BUFFER = 50; 
-
+        // Only perform a handoff if you have at least this much energy and the receiver has at least this much room.
         Memory.Config.MIN_ENERGY_HANDOFF = 50;
-
+        // Don't repair a structure unless it needs at least this many HP.
         Memory.Config.MIN_DAMAGE_TO_REPAIR = 1000;
-        Memory.Config.MIN_WALL_HP = 500000;
+        // Keep Walls (and ramparts) at this many HP
+        Memory.Config.MIN_WALL_HP = 150000;
+        // Use tower to repair things only when it has at least this much energy
         Memory.Config.TOWER_RESERVE_ENERGY = 700;
+        // Only put energy into a tower if it needs at least 70 energy to get full.
         Memory.Config.MIN_TOWER_FILL = 70;
+        // leave this much space for energy in the terminal - the rest can be minerals.
+        Memory.Config.TERMINAL_RESERVE_ENERGY = 100000;
 
         require('config.jobs').init();
         require('config.spawn').init();
+        require('config.market').init();
+        require('config.pathing').init();
+
     },
 
     calculations: function() {
@@ -61,25 +80,13 @@ var config = {
                 Memory.Config.Census[roomName][roleName] = matches;
             }
             Memory.Config.FighterCount += Memory.Config.Census[roomName]['melee'].length + Memory.Config.Census[roomName]['ranged'].length;
-        }
-        
-
-        Memory.Config.baseController = Game.rooms[Memory.Config.baseroom].controller;
-
-        
-        // var returnFlag = Game.flags[Memory.Config.ReturnFlagName];
-        // if (returnFlag) {
-        //     Memory.Config.ReturnFlag = returnFlag;
-        //     //if (returnFlag.room) { Memory.Config.baseExit = returnFlag; }
-        // } else {
-        //     Memory.Config.ReturnFlag = null;
-        // }
+        }        
 
         var hidingFlag = Game.flags[Memory.Config.HidingFlagName];
         if (hidingFlag) {
             Memory.Config.HidingFlag = hidingFlag;
         } else {
-            Memory.Config.HidingFlag = Memory.Config.baseController;
+            Memory.Config.HidingFlag = Game.spawns[Memory.Config.primaryspawn].room.controller;
         }
 
         Memory.Config.any_hostile = false;

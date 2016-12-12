@@ -24,7 +24,7 @@ var roleRemoteHarvester = {
 
         if (!creep.memory.fleeing && creep.memory.unloading && _.sum(creep.carry) == 0) {
             creep.memory.unloading = false;
-            creep.say('harvesting');
+            creep.say('extracting');
         }
         if (!creep.memory.unloading && _.sum(creep.carry) == creep.carryCapacity) {
             creep.memory.unloading = true;
@@ -47,8 +47,10 @@ var roleRemoteHarvester = {
             if (creep.room.name != creep.memory.remoteharvestroom) { 
                 if (Memory.Config.Actions['changeroom'].work(creep, creep.memory.remoteharvestroom)) { return true; }                
             } else {                                    
-                if (Memory.Config.Actions['pickup'].work(creep)) { return true; }                    
+                //if (Memory.Config.Actions['pickup'].work(creep)) { return true; }                    
+                if (Memory.Config.Actions['extract'].work(creep)) { return true; }                
                 if (Memory.Config.Actions['mining'].work(creep)) { return true; }
+
 
                 closestSource = creep.pos.findClosestByRange(FIND_SOURCES);
                 creep.moveTo(closestSource);

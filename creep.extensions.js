@@ -15,6 +15,7 @@ var mod = {
         };
 
         Creep.prototype.needsRenew = function() {
+            if (!Memory.Config.ALLOW_RENEW) { return false; }
         	renewing = _.filter(Game.creeps, (creep) => (creep.memory.renewing == true));
 
             // if we plan to fight, let's beef up the fighters and let them expire at the battle (no return home)
@@ -101,11 +102,8 @@ var mod = {
         Creep.loop = function() {	        	        
 	        for (var creepName in Game.creeps) {
 	            var creep = Game.creeps[creepName];
-
+                if (creep.spawning) { continue; }
 	            creep.resetRenew();
-
-                // can't work while he's spawning.
-                if (creep.spawning) continue;
 
 	            // if he needs to be renewed, head home
 	            if (creep.needsRenew()) {	                

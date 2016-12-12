@@ -5,9 +5,10 @@ global.getCreepWithRole = function(roleName, room) {
 
 global.calculateParts = function(room, build, cost, max_multiples) {
     
-    var body = [];
+    var body = [];    
+    var spawnBuffer = Memory.Config.ControllerSize[room.controller.level].SPAWN_BUFFER;
     
-    count = Math.floor((room.energyCapacityAvailable-Memory.Config.SPAWN_BUFFER) / cost);
+    count = Math.floor((room.energyCapacityAvailable-spawnBuffer) / cost);
     if (count > max_multiples) { count = max_multiples; }
 
     if (count == 0) { return ['FAIL']; }
@@ -62,6 +63,23 @@ global.calcRemoteHarvestRoom = function(targetRoomName, max) {
     return null;
 }
 
+global.calcExtractRoom = function(targetRoomName, max) {
+
+    if (!Memory.Config.extractrooms || 
+        !Memory.Config.extractrooms[targetRoomName]) { return null; }
+
+    var arrayLength = Memory.Config.extractrooms[targetRoomName].length;
+    for (var i = 0; i < arrayLength; i++) {
+        var roomName = Memory.Config.extractrooms[targetRoomName][i];        
+        var remoteharvesters = _.filter(Game.creeps, 
+            (creep) => ((creep.memory.role == 'extractor') && (creep.memory.remoteharvestroom == roomName)));
+        if (remoteharvesters.length < max) {
+            return roomName;
+        }        
+    }
+    return null;
+}
+
 global.autospawn = function(roleName, spawn, max, build, cost) {
 	if (max == 0) { return false; }
 
@@ -74,7 +92,12 @@ global.autospawn = function(roleName, spawn, max, build, cost) {
 
     var remoteharvestroom = null;
     if (roleName == 'remoteharvester') {
-        remoteharvestroom = calcRemoteHarvestRoom(spawn.room.name, max);
+        remoteharvestroom = calcRemoteHarvestRoom(spawn.room.name, max);        
+        if (remoteharvestroom == null) { return false; }
+    }
+
+    if (roleName == 'extractor') {
+        remoteharvestroom = calcExtractRoom(spawn.room.name, max);        
         if (remoteharvestroom == null) { return false; }
     }
 	
@@ -121,7 +144,8 @@ global.autospawn = function(roleName, spawn, max, build, cost) {
     
     var max_multiples = 100;
     if (roleName == 'reserver') { max_multiples = 2; }
-    var parts = calculateParts(spawn.room, build, cost, max_multiples);
+    if (roleName == 'extractor') { max_multiples = 2; }
+    var parts = calculateParts(spawn.room, build, cost, max_multiples);    
     if (parts.length > 1) { console.log('role: ' + roleName + '-Parts: ' + parts.length + ":" + parts.toString());} 
     
     if (hurry) {
@@ -140,7 +164,7 @@ global.autospawn = function(roleName, spawn, max, build, cost) {
     if (roleName == 'reserver') {
         startingMemory.reserveroom = reserveRoom;
     }
-    if (roleName == 'remoteharvester') {
+    if (roleName == 'remoteharvester' || roleName == 'extractor') {
         startingMemory.remoteharvestroom = remoteharvestroom;
     }      
 
@@ -168,17 +192,13 @@ var roleAutoSpawn = {
         
         if (autospawn('harvester', spawn, 1, c.BUILD_HARVESTER, c.COST_HARVESTER)) { return true; }
         if (autospawn('upgrader', spawn, 1, c.BUILD_UPGRADER, c.COST_UPGRADER)) { return true; }
-        if (autospawn('repair', spawn, 1, c.BUILD_HARVESTER, c.COST_HARVESTER)) { return true; }
-	    
-
-               
-
+        if (autospawn('repair', spawn, 1, c.BUILD_HARVESTER, c.COST_HARVESTER)) { return true; }	    
         if (autospawn('harvester', spawn, c.MAX_HARVESTERS, c.BUILD_HARVESTER, c.COST_HARVESTER)) { return true; }
-        if (autospawn('remoteharvester', spawn, c.MAX_REMOTEHARVESTER, c.BUILD_REMOTEHARVESTER, c.COST_REMOTEHARVESTER)) { return true; }
         if (autospawn('upgrader', spawn, c.MAX_UPGRADER, c.BUILD_UPGRADER, c.COST_UPGRADER)) { return true; }        
         if (autospawn('builder', spawn, c.MAX_BUILDERS, c.BUILD_UPGRADER, c.COST_UPGRADER)) { return true; }
         if (autospawn('repair', spawn, c.MAX_REPAIR, c.BUILD_UPGRADER, c.COST_UPGRADER)) { return true; }
-        
+        if (autospawn('extractor', spawn, c.MAX_EXTRACTOR, c.BUILD_EXTRACTOR, c.COST_EXTRACTOR)) { return true; }
+        if (autospawn('remoteharvester', spawn, c.MAX_REMOTEHARVESTER, c.BUILD_REMOTEHARVESTER, c.COST_REMOTEHARVESTER)) { return true; }        
         if (autospawn('tower', spawn, c.MAX_TOWER_FILLER, c.BUILD_UPGRADER, c.COST_UPGRADER)) { return true; }
         if (autospawn('reserver', spawn, 1,c.BUILD_RESERVER, c.COST_RESERVER)) { return true; } 
         if (autospawn('melee', spawn, c.MAX_MELEE, c.BUILD_MELEE, c.COST_MELEE)) { return true; }       

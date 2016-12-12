@@ -5,7 +5,7 @@ var target = {
 
 		var nearbyFriends = creep.pos.findInRange(FIND_MY_CREEPS, 1, {
             filter: (friend) => {
-                return (friend.carry.energy < friend.carryCapacity &&
+                return (friend.carry.energy < (friend.carryCapacity-Memory.Config.MIN_ENERGY_HANDOFF) &&
                         friend.memory.role != 'harvester' &&
                         friend.memory.role != 'remoteharvester');
             }

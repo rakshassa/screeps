@@ -4,11 +4,35 @@ var action = {
             return false;
         }
 
-        // optimize pathing - remove if we need multiple exits from baseroom
-    	// if (creep.pos.roomName == Memory.Config.baseroom) {                
-     //        creep.moveTo(Memory.Config.baseExit);
-     //        return true;
-     //    }
+        if (Memory.Config.Pathing && 
+            Memory.Config.Pathing[creep.room.name] &&
+            Memory.Config.Pathing[creep.room.name][targetRoomName]) {
+            
+            var flagName = Memory.Config.Pathing[creep.room.name][targetRoomName];
+            if (Game.flags[flagName]) {
+                if (!creep.pos.inRangeTo(Game.flags[flagName], 2)) {
+                    creep.moveTo(Game.flags[flagName])                    
+                    return true;
+                }
+            }
+        }
+        // if (creep.room.name == 'W58S78' && targetRoomName == 'W59S78') {
+        //     if (Game.flags['Exit']) {
+        //         if (!creep.pos.inRangeTo(Game.flags['Exit'], 2)) {
+        //             creep.moveTo(Game.flags['Exit'])
+        //             return true;
+        //         }
+        //     }
+        // }
+
+        // if (creep.room.name == 'W59S78' && targetRoomName == 'W58S78') {
+        //     if (Game.flags['Exit2']) {
+        //         if (!creep.pos.inRangeTo(Game.flags['Exit2'], 2)) {
+        //             creep.moveTo(Game.flags['Exit2'])
+        //             return true;
+        //         }
+        //     }
+        // }
         
     	var exitDir = creep.room.findExitTo(targetRoomName);
         if (exitDir == ERR_NO_PATH) {

@@ -4,7 +4,7 @@ var action = {
         if(!source) { return false; }
 
         var retVal = creep.harvest(source, RESOURCE_ENERGY);
-        if(retVal == ERR_NOT_IN_RANGE) {
+        if(retVal == ERR_NOT_IN_RANGE) {            
             creep.moveTo(source);
         } else {
         	if (retVal != OK) {

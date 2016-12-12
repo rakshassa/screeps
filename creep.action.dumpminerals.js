@@ -9,11 +9,11 @@ var action = {
         if(!storage) { return false; }
         
         for (var mineraltype in creep.carry) {
-        	if (mineraltype != RESOURCE_ENERGY) {
+        	//if (mineraltype != RESOURCE_ENERGY) {
 				if (creep.transfer(storage, mineraltype) == ERR_NOT_IN_RANGE) {
 		            creep.moveTo(storage);
 		        }
-		    }
+		    //}
 	    }
         return true;
     }
